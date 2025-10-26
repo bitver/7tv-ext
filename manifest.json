@@ -1,0 +1,48 @@
+{
+  "manifest_version": 3,
+  "name": "7TV Extension",
+  "version": "1.0.0",
+  "description": "A browser extension for 7TV",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "background": {
+    "scripts": ["background/background.js"]
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://7tv.app/*", "*://*.7tv.app/*"],
+      "js": ["content/content.js"],
+      "css": ["content/content.css"]
+    }
+  ],
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting",
+    "tabs"
+  ],
+  "host_permissions": [
+    "*://7tv.app/*", 
+    "*://*.7tv.app/*",
+    "*://api.7tv.app/*"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["assets/*"],
+      "matches": ["*://7tv.app/*", "*://*.7tv.app/*"]
+    }
+  ]
+}

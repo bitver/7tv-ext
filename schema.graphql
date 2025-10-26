@@ -1,0 +1,1544 @@
+type AdminPermission {
+	admin: Boolean!
+	bypassRateLimit: Boolean!
+	manageEntitlements: Boolean!
+	manageRedeemCodes: Boolean!
+	superAdmin: Boolean!
+}
+
+union AnyEvent = EmoteEvent | EmoteSetEvent | UserEvent
+
+type BackdoorQuery {
+	executeSql(sql: String!): String!
+}
+
+type Badge {
+	createdById: Id!
+	description: String
+	id: Id!
+	images: [Image!]!
+	name: String!
+	searchUpdatedAt: DateTime
+	tags: [String!]!
+	updatedAt: DateTime!
+}
+
+type BadgePermission {
+	admin: Boolean!
+	assign: Boolean!
+	manage: Boolean!
+}
+
+type BadgeProgress {
+	currentBadge: Badge
+	currentBadgeId: Id
+	nextBadge: BadgeProgressNextBadge
+}
+
+type BadgeProgressNextBadge {
+	badge: Badge
+	badgeId: Id!
+	daysLeft: Float!
+	percentage: Float!
+}
+
+type BadgeQuery {
+	badges: [Badge!]!
+}
+
+type Billing {
+	badgeProgress: BadgeProgress!
+	subscriptionInfo: SubscriptionInfo!
+}
+
+type BillingMutation {
+	cancelSubscription(productId: Id!): SubscriptionInfo!
+	getPickems(pickemsId: Id!, subscriptionPriceId: StripeProductId): SubscribeResponse!
+	reactivateSubscription(productId: Id!): SubscriptionInfo!
+	redeemCode(code: String!): RedeemResponse!
+	subscribe(variantId: StripeProductId!): SubscribeResponse!
+}
+
+union CodeEffect = CodeEffectDirectEntitlement | CodeEffectSpecialEvent
+
+type CodeEffectDirectEntitlement {
+	entitlements: [EntitlementNodeAny!]!
+}
+
+type CodeEffectSpecialEvent {
+	specialEvent: SpecialEvent
+	specialEventId: Id!
+}
+
+type Color {
+	a: Int!
+	b: Int!
+	g: Int!
+	hex: String!
+	r: Int!
+}
+
+input CreateProductInput {
+	active: Boolean!
+	description: String
+	name: String!
+	price: Int!
+	providerId: String!
+}
+
+input CreateRedeemCodeBatchInput {
+	activePeriod: TimePeriodInput
+	description: String
+	name: String!
+	number: Int!
+	specialEventId: Id!
+	subscriptionEffect: RedeemCodeSubscriptionEffectInput
+	tags: [String!]!
+	uses: Int!
+}
+
+input CreateRedeemCodeInput {
+	activePeriod: TimePeriodInput
+	code: String
+	description: String
+	name: String!
+	specialEventId: Id!
+	subscriptionEffect: RedeemCodeSubscriptionEffectInput
+	tags: [String!]!
+	uses: Int!
+}
+
+input CreateSpecialEventInput {
+	description: String
+	name: String!
+	tags: [String!]!
+}
+
+scalar CustomerId
+
+"""
+Implement the DateTime<Utc> scalar
+
+The input/output is a string in RFC3339 format.
+"""
+scalar DateTime @specifiedBy(url: "https://datatracker.ietf.org/doc/html/rfc3339")
+
+type EditorEmotePermission {
+	admin: Boolean!
+	create: Boolean!
+	manage: Boolean!
+	transfer: Boolean!
+}
+
+input EditorEmotePermissionInput {
+	admin: Boolean!
+	create: Boolean!
+	manage: Boolean!
+	transfer: Boolean!
+}
+
+type EditorEmoteSetPermission {
+	admin: Boolean!
+	create: Boolean!
+	manage: Boolean!
+}
+
+input EditorEmoteSetPermissionInput {
+	admin: Boolean!
+	create: Boolean!
+	manage: Boolean!
+}
+
+type EditorUserPermission {
+	admin: Boolean!
+	manageBilling: Boolean!
+	manageEditors: Boolean!
+	managePersonalEmoteSet: Boolean!
+	manageProfile: Boolean!
+}
+
+input EditorUserPermissionInput {
+	admin: Boolean!
+	manageBilling: Boolean!
+	manageEditors: Boolean!
+	managePersonalEmoteSet: Boolean!
+	manageProfile: Boolean!
+}
+
+type Emote {
+	aspectRatio: Float!
+	attribution: [EmoteAttribution!]!
+	channels(page: Int, perPage: Int): UserSearchResult!
+	defaultName: String!
+	deleted: Boolean!
+	events(page: Int, perPage: Int): [EmoteEvent!]!
+	flags: EmoteFlags!
+	id: Id!
+	images: [Image!]!
+	imagesPending: Boolean!
+	inEmoteSets(emoteSetIds: [Id!]!): [EmoteInEmoteSetResponse!]!
+	owner: User
+	ownerId: Id!
+	ranking(ranking: Ranking!): Int
+	scores: EmoteScores!
+	searchUpdatedAt: DateTime
+	tags: [String!]!
+	updatedAt: DateTime!
+}
+
+type EmoteAttribution {
+	addedAt: DateTime!
+	user: User
+	userId: Id!
+}
+
+type EmoteBatchOperation {
+	delete(reason: String): [Emote!]!
+	flags(flags: EmoteFlagsInput!): [Emote!]!
+	merge(with: Id!): [Emote!]!
+	name(name: String!): [Emote!]!
+	owner(ownerId: Id!): [Emote!]!
+	tags(tags: [String!]!): [Emote!]!
+}
+
+type EmoteEvent {
+	actor: User
+	actorId: Id
+	createdAt: DateTime!
+	data: EventEmoteData!
+	id: Id!
+	searchUpdatedAt: DateTime
+	target: Emote
+	targetId: Id!
+	updatedAt: DateTime!
+}
+
+type EmoteFlags {
+	animated: Boolean!
+	approvedPersonal: Boolean!
+	defaultZeroWidth: Boolean!
+	deniedPersonal: Boolean!
+	nsfw: Boolean!
+	private: Boolean!
+	publicListed: Boolean!
+}
+
+input EmoteFlagsInput {
+	animated: Boolean
+	approvedPersonal: Boolean
+	defaultZeroWidth: Boolean
+	deniedPersonal: Boolean
+	nsfw: Boolean
+	private: Boolean
+	publicListed: Boolean
+}
+
+type EmoteInEmoteSetResponse {
+	emote: EmoteSetEmote
+	emoteSetId: Id!
+}
+
+type EmoteModerationRequestPermission {
+	admin: Boolean!
+	manage: Boolean!
+}
+
+type EmoteMutation {
+	emote(id: Id!): EmoteOperation!
+	emotes(ids: [Id!]!): EmoteBatchOperation!
+}
+
+type EmoteOperation {
+	delete: Emote!
+	flags(flags: EmoteFlagsInput!): Emote!
+	merge(targetId: Id!): Emote!
+	name(name: String!): Emote!
+	owner(ownerId: Id!): Emote!
+	tags(tags: [String!]!): Emote!
+}
+
+type EmotePermission {
+	admin: Boolean!
+	delete: Boolean!
+	edit: Boolean!
+	manageAny: Boolean!
+	merge: Boolean!
+	upload: Boolean!
+	viewUnlisted: Boolean!
+}
+
+type EmoteQuery {
+	emote(id: Id!): Emote
+	search(
+		filters: Filters
+		page: Int
+		perPage: Int
+		query: String
+		sort: Sort!
+		tags: Tags
+	): EmoteSearchResult!
+}
+
+type EmoteScores {
+	topAllTime: Int!
+	topDaily: Int!
+	topMonthly: Int!
+	topWeekly: Int!
+	trendingDay: Int!
+	trendingMonth: Int!
+	trendingWeek: Int!
+}
+
+type EmoteSearchResult {
+	items: [Emote!]!
+	pageCount: Int!
+	totalCount: Int!
+}
+
+type EmoteSet {
+	capacity: Int
+	description: String
+	emotes(page: Int, perPage: Int, query: String): EmoteSetEmoteSearchResult!
+	id: Id!
+	kind: EmoteSetKind!
+	name: String!
+	owner: User
+	ownerId: Id
+	searchUpdatedAt: DateTime
+	tags: [String!]!
+	updatedAt: DateTime!
+}
+
+type EmoteSetEmote {
+	addedAt: DateTime!
+	addedById: Id
+	alias: String!
+	emote: Emote!
+	flags: EmoteSetEmoteFlags!
+	id: Id!
+	originSetId: Id
+}
+
+type EmoteSetEmoteFlags {
+	overrideConflicts: Boolean!
+	zeroWidth: Boolean!
+}
+
+input EmoteSetEmoteFlagsInput {
+	overrideConflicts: Boolean!
+	zeroWidth: Boolean!
+}
+
+input EmoteSetEmoteId {
+	alias: String
+	emoteId: Id!
+}
+
+type EmoteSetEmoteSearchResult {
+	items: [EmoteSetEmote!]!
+	pageCount: Int!
+	totalCount: Int!
+}
+
+type EmoteSetEvent {
+	actor: User
+	actorId: Id
+	createdAt: DateTime!
+	data: EventEmoteSetData!
+	id: Id!
+	searchUpdatedAt: DateTime
+	target: EmoteSet
+	targetId: Id!
+	updatedAt: DateTime!
+}
+
+enum EmoteSetKind {
+	GLOBAL
+	NORMAL
+	PERSONAL
+	SPECIAL
+}
+
+type EmoteSetMutation {
+	create(name: String!, ownerId: Id, tags: [String!]!): EmoteSet!
+	emoteSet(id: Id!): EmoteSetOperation!
+}
+
+type EmoteSetOperation {
+	addEmote(id: EmoteSetEmoteId!, overrideConflicts: Boolean, zeroWidth: Boolean): EmoteSet!
+	capacity(capacity: Int!): EmoteSet!
+	delete: Boolean!
+	name(name: String!): EmoteSet!
+	removeEmote(id: EmoteSetEmoteId!): EmoteSet!
+	tags(tags: [String!]!): EmoteSet!
+	updateEmoteAlias(alias: String!, id: EmoteSetEmoteId!): EmoteSetEmote!
+	updateEmoteFlags(flags: EmoteSetEmoteFlagsInput!, id: EmoteSetEmoteId!): EmoteSetEmote!
+}
+
+type EmoteSetPermission {
+	admin: Boolean!
+	assign: Boolean!
+	manage: Boolean!
+	manageAny: Boolean!
+	manageGlobal: Boolean!
+	manageSpecial: Boolean!
+	resize: Boolean!
+}
+
+type EmoteSetQuery {
+	emoteSet(id: Id!): EmoteSet
+	emoteSets(ids: [Id!]!): [EmoteSet!]!
+}
+
+type EntitlementEdgeAnyAny {
+	from: EntitlementNodeAny!
+	to: EntitlementNodeAny!
+}
+
+type EntitlementEdgeAnyBadge {
+	from: EntitlementNodeAny!
+	to: EntitlementNodeBadge!
+}
+
+type EntitlementEdgeAnyPaint {
+	from: EntitlementNodeAny!
+	to: EntitlementNodePaint!
+}
+
+type EntitlementEdgeAnyProduct {
+	from: EntitlementNodeAny!
+	to: EntitlementNodeProduct!
+}
+
+type EntitlementEdgeMutation {
+	create(from: EntitlementNodeInput!, to: EntitlementNodeInput!): EntitlementEdgeAnyAny!
+	entitlementEdge(from: EntitlementNodeInput!, to: EntitlementNodeInput!): EntitlementEdgeOperation!
+}
+
+type EntitlementEdgeOperation {
+	delete: Boolean!
+}
+
+union EntitlementNodeAny =
+	| EntitlementNodeUser
+	| EntitlementNodeRole
+	| EntitlementNodeBadge
+	| EntitlementNodePaint
+	| EntitlementNodeEmoteSet
+	| EntitlementNodeProduct
+	| EntitlementNodeSubscriptionBenefit
+	| EntitlementNodeSubscription
+	| EntitlementNodeSpecialEvent
+	| EntitlementNodeGlobalDefaultEntitlementGroup
+
+type EntitlementNodeBadge {
+	badge: Badge
+	badgeId: Id!
+}
+
+type EntitlementNodeEmoteSet {
+	emoteSet: EmoteSet
+	emoteSetId: Id!
+}
+
+type EntitlementNodeGlobalDefaultEntitlementGroup {
+	noop: Boolean! @deprecated
+}
+
+input EntitlementNodeInput {
+	id: Id!
+	type: EntitlementNodeTypeInput!
+}
+
+type EntitlementNodePaint {
+	paint: Paint
+	paintId: Id!
+}
+
+type EntitlementNodeProduct {
+	productId: Id!
+}
+
+type EntitlementNodeRole {
+	role: Role
+	roleId: Id!
+}
+
+type EntitlementNodeSpecialEvent {
+	specialEvent: SpecialEvent
+	specialEventId: Id!
+}
+
+type EntitlementNodeSubscription {
+	subscriptionId: SubscriptionId!
+}
+
+type EntitlementNodeSubscriptionBenefit {
+	subscriptionBenefit: SubscriptionBenefit
+	subscriptionBenefitId: Id!
+}
+
+enum EntitlementNodeTypeInput {
+	BADGE
+	EMOTE_SET
+	GLOBAL_DEFAULT_ENTITLEMENT_GROUP
+	PAINT
+	ROLE
+	SPECIAL_EVENT
+	SUBSCRIPTION_BENEFIT
+	USER
+}
+
+type EntitlementNodeUser {
+	user: User
+	userId: Id!
+}
+
+type EntitlementQuery {
+	traverse(from: EntitlementNodeInput!): RawEntitlements!
+}
+
+union EventEmoteData =
+	| EventEmoteDataUpload
+	| EventEmoteDataProcess
+	| EventEmoteDataChangeName
+	| EventEmoteDataMerge
+	| EventEmoteDataChangeOwner
+	| EventEmoteDataChangeTags
+	| EventEmoteDataChangeFlags
+	| EventEmoteDataDelete
+
+type EventEmoteDataChangeFlags {
+	newFlags: EmoteFlags!
+	oldFlags: EmoteFlags!
+}
+
+type EventEmoteDataChangeName {
+	newName: String!
+	oldName: String!
+}
+
+type EventEmoteDataChangeOwner {
+	newOwner: User
+	newOwnerId: Id!
+	oldOwner: User
+	oldOwnerId: Id!
+}
+
+type EventEmoteDataChangeTags {
+	newTags: [String!]!
+	oldTags: [String!]!
+}
+
+type EventEmoteDataDelete {
+	"""
+	Always false
+	"""
+	noop: Boolean! @deprecated
+}
+
+type EventEmoteDataMerge {
+	newEmote: Emote!
+	newEmoteId: Id!
+}
+
+type EventEmoteDataProcess {
+	event: ImageProcessorEvent!
+}
+
+type EventEmoteDataUpload {
+	"""
+	Always false
+	"""
+	noop: Boolean! @deprecated
+}
+
+union EventEmoteSetData =
+	| EventEmoteSetDataCreate
+	| EventEmoteSetDataChangeName
+	| EventEmoteSetDataChangeTags
+	| EventEmoteSetDataChangeCapacity
+	| EventEmoteSetDataAddEmote
+	| EventEmoteSetDataRemoveEmote
+	| EventEmoteSetDataRenameEmote
+	| EventEmoteSetDataDelete
+
+type EventEmoteSetDataAddEmote {
+	addedEmote: Emote
+	addedEmoteId: Id!
+	alias: String!
+}
+
+type EventEmoteSetDataChangeCapacity {
+	newCapacity: Int
+	oldCapacity: Int
+}
+
+type EventEmoteSetDataChangeName {
+	newName: String!
+	oldName: String!
+}
+
+type EventEmoteSetDataChangeTags {
+	newTags: [String!]!
+	oldTags: [String!]!
+}
+
+type EventEmoteSetDataCreate {
+	"""
+	Always false
+	"""
+	noop: Boolean! @deprecated
+}
+
+type EventEmoteSetDataDelete {
+	"""
+	Always false
+	"""
+	noop: Boolean! @deprecated
+}
+
+type EventEmoteSetDataRemoveEmote {
+	removedEmote: Emote
+	removedEmoteId: Id!
+}
+
+type EventEmoteSetDataRenameEmote {
+	newAlias: String!
+	oldAlias: String!
+	renamedEmote: Emote
+	renamedEmoteId: Id!
+}
+
+union EventUserData =
+	| EventUserDataCreate
+	| EventUserDataChangeActivePaint
+	| EventUserDataChangeActiveBadge
+	| EventUserDataChangeActiveEmoteSet
+	| EventUserDataAddConnection
+	| EventUserDataRemoveConnection
+	| EventUserDataDelete
+
+type EventUserDataAddConnection {
+	addedPlatform: Platform!
+}
+
+type EventUserDataChangeActiveBadge {
+	newBadge: Badge
+	newBadgeId: Id
+	oldBadge: Badge
+	oldBadgeId: Id
+}
+
+type EventUserDataChangeActiveEmoteSet {
+	newEmoteSet: EmoteSet
+	newEmoteSetId: Id
+	oldEmoteSet: EmoteSet
+	oldEmoteSetId: Id
+}
+
+type EventUserDataChangeActivePaint {
+	newPaint: Paint
+	newPaintId: Id
+	oldPaint: Paint
+	oldPaintId: Id
+}
+
+type EventUserDataCreate {
+	"""
+	Always false
+	"""
+	noop: Boolean! @deprecated
+}
+
+type EventUserDataDelete {
+	"""
+	Always false
+	"""
+	noop: Boolean! @deprecated
+}
+
+type EventUserDataRemoveConnection {
+	removedPlatform: Platform!
+}
+
+input Filters {
+	animated: Boolean
+	approvedPersonal: Boolean
+	defaultZeroWidth: Boolean
+	"""
+	defaults to false when unset
+	"""
+	exactMatch: Boolean
+	nsfw: Boolean
+}
+
+type FlagPermission {
+	hidden: Boolean!
+}
+
+scalar Id
+
+type Image {
+	frameCount: Int!
+	height: Int!
+	mime: String!
+	scale: Int!
+	size: Int!
+	url: String!
+	width: Int!
+}
+
+enum ImageProcessorEvent {
+	CANCEL
+	FAIL
+	START
+	SUCCESS
+}
+
+scalar InvoiceId
+
+"""
+A scalar that can represent any JSON Object value.
+"""
+scalar JSONObject
+
+type JobMutation {
+	rerunSubscriptionRefreshJob: Boolean!
+}
+
+input KickLinkInput {
+	avatarUrl: String
+	displayName: String!
+	id: String!
+	username: String!
+}
+
+type Mutation {
+	billing(userId: Id!): BillingMutation!
+	emoteSets: EmoteSetMutation!
+	emotes: EmoteMutation!
+	entitlementEdges: EntitlementEdgeMutation!
+	jobs: JobMutation!
+	product: ProductMutation!
+	redeemCodes: RedeemCodeMutation!
+	specialEvents: SpecialEventMutation!
+	tickets: TicketMutation!
+	userEditors: UserEditorMutation!
+	userSessions: UserSessionMutation!
+	users: UserMutation!
+}
+
+type Paint {
+	createdById: Id!
+	data: PaintData!
+	description: String
+	id: Id!
+	name: String!
+	searchUpdatedAt: DateTime
+	tags: [String!]!
+	updatedAt: DateTime!
+}
+
+type PaintData {
+	layers: [PaintLayer!]!
+	shadows: [PaintShadow!]!
+}
+
+type PaintGradientStop {
+	at: Float!
+	color: Color!
+}
+
+type PaintLayer {
+	id: Id!
+	opacity: Float!
+	ty: PaintLayerType!
+}
+
+union PaintLayerType =
+	| PaintLayerTypeSingleColor
+	| PaintLayerTypeLinearGradient
+	| PaintLayerTypeRadialGradient
+	| PaintLayerTypeImage
+
+type PaintLayerTypeImage {
+	images: [Image!]!
+}
+
+type PaintLayerTypeLinearGradient {
+	angle: Int!
+	repeating: Boolean!
+	stops: [PaintGradientStop!]!
+}
+
+type PaintLayerTypeRadialGradient {
+	repeating: Boolean!
+	shape: PaintRadialGradientShape!
+	stops: [PaintGradientStop!]!
+}
+
+type PaintLayerTypeSingleColor {
+	color: Color!
+}
+
+type PaintPermission {
+	admin: Boolean!
+	assign: Boolean!
+	manage: Boolean!
+}
+
+type PaintQuery {
+	paints: [Paint!]!
+}
+
+enum PaintRadialGradientShape {
+	CIRCLE
+	ELLIPSE
+}
+
+type PaintShadow {
+	blur: Float!
+	color: Color!
+	offsetX: Float!
+	offsetY: Float!
+}
+
+type Permissions {
+	admin: AdminPermission!
+	badge: BadgePermission!
+	emote: EmotePermission!
+	emoteModerationRequest: EmoteModerationRequestPermission!
+	emoteModerationRequestLimit: Int
+	emoteModerationRequestPriority: Int
+	emoteSet: EmoteSetPermission!
+	emoteSetCapacity: Int
+	emoteSetLimit: Int
+	flags: FlagPermission!
+	paint: PaintPermission!
+	personalEmoteSetCapacity: Int
+	ratelimits: JSONObject!
+	role: RolePermission!
+	ticket: TicketPermission!
+	user: UserPermission!
+}
+
+enum Platform {
+	DISCORD
+	GOOGLE
+	KICK
+	TWITCH
+}
+
+enum ReportStatus {
+	OPEN
+	ASSIGNED
+	CLOSED
+}
+
+type Report {
+	id: Id!
+	target_kind: Int!
+	target_id: Id!
+	actor_id: Id!
+	subject: String!
+	body: String!
+	priority: Int!
+	status: ReportStatus!
+	notes: [String!]!
+	actor: V3User!
+	assignees: [V3User!]!
+	created_at: DateTime!
+}
+
+type Price {
+	amount: Int!
+	currency: String!
+}
+
+type Product {
+	createdAt: DateTime!
+	description: String
+	id: Id!
+	name: String!
+	providerId: String!
+	searchUpdatedAt: DateTime
+	updatedAt: DateTime!
+}
+
+type ProductMutation {
+	create(data: CreateProductInput!): Product!
+}
+
+type ProductQuery {
+	subscriptionProduct(id: Id!): SubscriptionProduct
+	subscriptionProducts: [SubscriptionProduct!]!
+}
+
+type ProviderSubscriptionId {
+	id: String!
+	provider: SubscriptionProvider!
+}
+
+type Query {
+	backdoor: BackdoorQuery!
+	badges: BadgeQuery!
+	emoteSets: EmoteSetQuery!
+	emotes: EmoteQuery!
+	entitlements: EntitlementQuery!
+	paints: PaintQuery!
+	products: ProductQuery!
+	redeemCodes: RedeemCodeQuery!
+	roles: RoleQuery!
+	search: SearchQuery!
+	specialEvents: SpecialEventQuery!
+	store: StoreQuery!
+	users: UserQuery!
+	modRequests(page: Int!, limit: Int!, wish: String!, country: [String!]!): ModRequestMessageList!
+	reports(status: ReportStatus, limit: Int, page: Int): [Report!]!
+	emotesByID(list: [Id!]!): [EmotePartial!]!
+}
+
+type ImageFile {
+	name: String!
+	format: String!
+	width: Int!
+	height: Int!
+	size: Int!
+}
+
+type ImageHost {
+	files: [ImageFile!]!
+	url: String!
+}
+
+type UserPartial {
+	display_name: String!
+	id: Id!
+	username: String!
+	avatar_url: String!
+	type: String!
+	biography: String!
+	created_at: DateTime!
+	style: UserStyle!
+	roles: [Id!]!
+	connections: [UserConnection!]!
+}
+
+type EmotePartial {
+	id: Id!
+	name: String!
+	tags: [String!]!
+	animated: Boolean!
+	owner_id: Id!
+	host: ImageHost!
+	listed: Boolean!
+	created_at: DateTime!
+	owner: UserPartial!
+	flags: [String!]!
+	state: String!
+}
+
+type ModRequestMessageList {
+	messages: [ModRequestMessage!]!
+	total: Int!
+}
+
+type ModRequestMessage {
+	id: Id!
+	kind: MessageKind!
+	author_id: Id
+	read: Boolean!
+	read_at: DateTime
+	target_kind: Int!
+	target_id: Id!
+	wish: String!
+	actor_country_name: String!
+	actor_country_code: String!
+	created_at: DateTime!
+}
+
+enum MessageKind {
+	EMOTE_COMMENT
+	MOD_REQUEST
+	INBOX
+	NEWS
+}
+
+enum Ranking {
+	TOP_ALL_TIME
+	TOP_DAILY
+	TOP_MONTHLY
+	TOP_WEEKLY
+	TRENDING_DAILY
+	TRENDING_MONTHLY
+	TRENDING_WEEKLY
+}
+
+type RawEntitlements {
+	edges: [EntitlementEdgeAnyAny!]!
+	nodes: [EntitlementNodeAny!]!
+}
+
+type RedeemCode {
+	activePeriod: TimePeriod
+	code: String!
+	createdAt: DateTime!
+	createdBy: User
+	createdById: Id!
+	description: String
+	effect: CodeEffect!
+	id: Id!
+	name: String!
+	remainingUses: Int!
+	searchUpdatedAt: DateTime
+	subscriptionEffect: RedeemCodeSubscriptionEffect
+	tags: [String!]!
+	updatedAt: DateTime!
+}
+
+type RedeemCodeMutation {
+	create(data: CreateRedeemCodeInput!): RedeemCode!
+	createBatch(data: CreateRedeemCodeBatchInput!): [RedeemCode!]!
+	redeemCode(id: Id!): RedeemCodeOperation!
+}
+
+type RedeemCodeOperation {
+	deactivate: RedeemCode!
+}
+
+type RedeemCodeQuery {
+	redeemCode(id: Id!): RedeemCode
+	redeemCodes(
+		page: Int
+		perPage: Int
+		query: String
+		remainingUses: Boolean
+	): RedeemCodeSearchResult!
+}
+
+type RedeemCodeSearchResult {
+	items: [RedeemCode!]!
+	pageCount: Int!
+	totalCount: Int!
+}
+
+type RedeemCodeSubscriptionEffect {
+	id: Id!
+	noRedirectToStripe: Boolean!
+	subscriptionProduct: SubscriptionProduct
+	trialDays: Int
+}
+
+input RedeemCodeSubscriptionEffectInput {
+	noRedirectToStripe: Boolean!
+	productId: Id!
+	trialDays: Int
+}
+
+type RedeemResponse {
+	checkoutUrl: String
+}
+
+type Role {
+	color: Color
+	createdBy: User
+	createdById: Id!
+	description: String
+	id: Id!
+	name: String!
+	searchUpdatedAt: DateTime
+	tags: [String!]!
+	updatedAt: DateTime!
+}
+
+type RolePermission {
+	admin: Boolean!
+	assign: Boolean!
+	manage: Boolean!
+}
+
+type RoleQuery {
+	roles: [Role!]!
+}
+
+type SearchQuery {
+	all(page: Int, perPage: Int, query: String): SearchResultAll!
+}
+
+type SearchResultAll {
+	emotes: EmoteSearchResult!
+	users: UserSearchResult!
+}
+
+input Sort {
+	order: SortOrder!
+	sortBy: SortBy!
+}
+
+enum SortBy {
+	NAME_ALPHABETICAL
+	TOP_ALL_TIME
+	TOP_DAILY
+	TOP_MONTHLY
+	TOP_WEEKLY
+	TRENDING_DAILY
+	TRENDING_MONTHLY
+	TRENDING_WEEKLY
+	UPLOAD_DATE
+}
+
+enum SortOrder {
+	ASCENDING
+	DESCENDING
+}
+
+type SpecialEvent {
+	createdAt: DateTime!
+	createdBy: User
+	createdById: Id!
+	description: String
+	id: Id!
+	name: String!
+	searchUpdatedAt: DateTime
+	tags: [String!]!
+	updatedAt: DateTime!
+}
+
+type SpecialEventMutation {
+	create(data: CreateSpecialEventInput!): SpecialEvent!
+}
+
+type SpecialEventQuery {
+	specialEvents: [SpecialEvent!]!
+}
+
+type StoreQuery {
+	monthlyPaints: [Paint!]!
+}
+
+scalar StripeProductId
+
+type SubscribeResponse {
+	checkoutUrl: String!
+}
+
+type Subscription {
+	createdAt: DateTime!
+	endedAt: DateTime
+	id: SubscriptionId!
+	searchUpdatedAt: DateTime
+	state: SubscriptionState!
+	updatedAt: DateTime!
+}
+
+type SubscriptionBenefit {
+	id: Id!
+	name: String!
+}
+
+type SubscriptionId {
+	productId: Id!
+	userId: Id!
+}
+
+type SubscriptionInfo {
+	activePeriod: SubscriptionPeriod
+	endDate: DateTime
+	periods: [SubscriptionPeriod!]!
+	totalDays: Int!
+}
+
+type SubscriptionPeriod {
+	autoRenew: Boolean!
+	createdBy: SubscriptionPeriodCreatedBy!
+	end: DateTime!
+	giftedBy: User
+	giftedById: Id
+	id: Id!
+	isTrial: Boolean!
+	productId: StripeProductId!
+	providerId: ProviderSubscriptionId
+	searchUpdatedAt: DateTime
+	start: DateTime!
+	subscription: Subscription!
+	subscriptionId: SubscriptionId!
+	subscriptionProduct: SubscriptionProduct!
+	subscriptionProductVariant: SubscriptionProductVariant!
+	updatedAt: DateTime!
+}
+
+union SubscriptionPeriodCreatedBy =
+	| SubscriptionPeriodCreatedByRedeemCode
+	| SubscriptionPeriodCreatedByInvoice
+	| SubscriptionPeriodCreatedBySystem
+
+type SubscriptionPeriodCreatedByInvoice {
+	invoiceId: InvoiceId!
+}
+
+type SubscriptionPeriodCreatedByRedeemCode {
+	redeemCodeId: Id!
+}
+
+type SubscriptionPeriodCreatedBySystem {
+	reason: String
+}
+
+type SubscriptionProduct {
+	benefits: [SubscriptionBenefit!]!
+	defaultVariant: SubscriptionProductVariant!
+	description: String
+	id: Id!
+	name: String!
+	providerId: String!
+	searchUpdatedAt: DateTime
+	updatedAt: DateTime!
+	variants: [SubscriptionProductVariant!]!
+}
+
+enum SubscriptionProductKind {
+	MONTHLY
+	YEARLY
+}
+
+type SubscriptionProductVariant {
+	id: StripeProductId!
+	kind: SubscriptionProductKind!
+	paypalId: String
+	price(preferredCurrency: String): Price!
+}
+
+enum SubscriptionProvider {
+	PAY_PAL
+	STRIPE
+}
+
+enum SubscriptionState {
+	ACTIVE
+	CANCEL_AT_END
+	ENDED
+}
+
+input Tags {
+	match: TagsMatch!
+	tags: [String!]!
+}
+
+enum TagsMatch {
+	ALL
+	ANY
+}
+
+type Ticket {
+	authorId: Id!
+	countryCode: String
+	id: Id!
+	kind: TicketKind!
+	locked: Boolean!
+	members: [TicketMember!]!
+	open: Boolean!
+	priority: TicketPriority!
+	searchUpdatedAt: DateTime
+	tags: [String!]!
+	targets: [TicketTarget!]!
+	title: String!
+	updatedAt: DateTime!
+}
+
+enum TicketKind {
+	ABUSE
+	BILLING
+	GENERIC
+}
+
+type TicketMember {
+	kind: TicketMemberKind!
+	lastRead: Id
+	notifications: Boolean!
+	userId: Id!
+}
+
+enum TicketMemberKind {
+	ASSIGNED
+	MEMBER
+	WATCHER
+}
+
+type TicketMutation {
+	createAbuseTicket(content: String, target: TicketTargetInput!, title: String!): Ticket!
+}
+
+type TicketPermission {
+	admin: Boolean!
+	create: Boolean!
+	manageAbuse: Boolean!
+	manageBilling: Boolean!
+	manageGeneric: Boolean!
+	message: Boolean!
+}
+
+enum TicketPriority {
+	HIGH
+	LOW
+	MEDIUM
+	URGENT
+}
+
+type TicketTarget {
+	id: Id!
+	kind: TicketTargetType!
+}
+
+input TicketTargetInput {
+	id: Id!
+	kind: TicketTargetType!
+}
+
+enum TicketTargetType {
+	EMOTE
+	EMOTE_SET
+	USER
+}
+
+type TimePeriod {
+	end: DateTime!
+	start: DateTime!
+}
+
+input TimePeriodInput {
+	end: DateTime!
+	start: DateTime!
+}
+
+type User {
+	billing(productId: Id!): Billing!
+	connections: [UserConnection!]!
+	editableEmoteSetIds: [Id!]!
+	editorFor: [UserEditor!]!
+	editors: [UserEditor!]!
+	emoteSets: [EmoteSet!]!
+	events(page: Int, perPage: Int): [UserEvent!]!
+	highestRoleColor: Color
+	highestRoleRank: Int!
+	id: Id!
+	inventory: UserInventory!
+	mainConnection: UserConnection
+	ownedEmoteSets: [EmoteSet!]!
+	ownedEmotes: [Emote!]!
+	permissions: Permissions!
+	personalEmoteSet: EmoteSet
+	rawEntitlements: RawEntitlements!
+	relatedEvents(page: Int, perPage: Int): [AnyEvent!]!
+	roleIds: [Id!]!
+	roles: [Role!]!
+	searchUpdatedAt: DateTime
+	specialEmoteSets: [EmoteSet!]!
+	stripeCustomerId: CustomerId
+	style: UserStyle!
+	updatedAt: DateTime!
+}
+
+type V3User {
+	id: Id!
+	username: String!
+	display_name: String!
+	avatar_url: String!
+	biography: String
+	inbox_unread_count: Int
+	created_at: DateTime
+	style: UserStyle
+	editors: [UserEditor!]
+	editor_of: [UserEditor!]
+	cosmetics: [UserCosmetic!]
+	roles: [Id!]
+	emote_sets(entitled: Boolean): [EmoteSet!]
+	owned_emotes: [Emote!]
+	activity(limit: Int): [AuditLog!]
+	connections: [UserConnection!]
+	reports: [Report!]
+}
+
+type AuditLog {
+	id: Id!
+	actor_id: Id!
+	target_id: Id!
+	target_kind: Int!
+	created_at: DateTime!
+	reason: String!
+	actor: UserPartial!
+}
+
+type UserCosmetic {
+	id: Id!
+	selected: Boolean!
+}
+
+type UserConnection {
+	allowLogin: Boolean!
+	linkedAt: DateTime!
+	platform: Platform!
+	platformAvatarUrl: String
+	platformDisplayName: String!
+	platformId: String!
+	platformUsername: String!
+	updatedAt: DateTime!
+}
+
+type UserEditor {
+	addedAt: DateTime!
+	addedById: Id!
+	editor: User
+	editorId: Id!
+	notes: String
+	permissions: UserEditorPermissions!
+	searchUpdatedAt: DateTime
+	state: UserEditorState!
+	updatedAt: DateTime!
+	user: User
+	userId: Id!
+}
+
+type UserEditorMutation {
+	create(editorId: Id!, permissions: UserEditorPermissionsInput!, userId: Id!): UserEditor!
+	editor(editorId: Id!, userId: Id!): UserEditorOperation!
+}
+
+type UserEditorOperation {
+	delete: Boolean!
+	updatePermissions(permissions: UserEditorPermissionsInput!): UserEditor!
+	updateState(state: UserEditorUpdateState!): UserEditor!
+}
+
+type UserEditorPermissions {
+	emote: EditorEmotePermission!
+	emoteSet: EditorEmoteSetPermission!
+	superAdmin: Boolean!
+	user: EditorUserPermission!
+}
+
+input UserEditorPermissionsInput {
+	emote: EditorEmotePermissionInput!
+	emoteSet: EditorEmoteSetPermissionInput!
+	superAdmin: Boolean!
+	user: EditorUserPermissionInput!
+}
+
+enum UserEditorState {
+	ACCEPTED
+	PENDING
+	REJECTED
+}
+
+enum UserEditorUpdateState {
+	ACCEPT
+	REJECT
+}
+
+type UserEvent {
+	actor: User
+	actorId: Id
+	createdAt: DateTime!
+	data: EventUserData!
+	id: Id!
+	searchUpdatedAt: DateTime
+	target: User
+	targetId: Id!
+	updatedAt: DateTime!
+}
+
+type UserInventory {
+	badges: [EntitlementEdgeAnyBadge!]!
+	paints: [EntitlementEdgeAnyPaint!]!
+	products: [EntitlementEdgeAnyProduct!]!
+}
+
+type UserMutation {
+	user(id: Id!): UserOperation!
+}
+
+type UserOperation {
+	activeBadge(badgeId: Id): User!
+	activeEmoteSet(emoteSetId: Id): User!
+	activePaint(paintId: Id): User!
+	deleteAllSessions: Int!
+	mainConnection(platform: Platform!, platformId: String!): User!
+	manuallyLinkKick(kickChannel: KickLinkInput!): User!
+	removeConnection(platform: Platform!, platformId: String!): User!
+	removeProfilePicture: User!
+}
+
+type UserPermission {
+	admin: Boolean!
+	billing: Boolean!
+	inviteEditors: Boolean!
+	login: Boolean!
+	manageAny: Boolean!
+	manageBilling: Boolean!
+	manageSessions: Boolean!
+	moderate: Boolean!
+	useBadge: Boolean!
+	useCustomProfilePicture: Boolean!
+	usePaint: Boolean!
+	usePersonalEmoteSet: Boolean!
+	viewHidden: Boolean!
+}
+
+type UserProfilePicture {
+	id: Id!
+	images: [Image!]!
+	updatedAt: DateTime!
+	userId: Id!
+}
+
+type UserQuery {
+	me: User
+	search(page: Int, perPage: Int, query: String!): UserSearchResult!
+	user(id: Id!): User
+	userByConnection(platform: Platform!, platformId: String!): User
+}
+
+type UserSearchResult {
+	items: [User!]!
+	pageCount: Int!
+	totalCount: Int!
+}
+
+type UserSessionMutation {
+	create(expiresAt: DateTime!, userId: Id!): String!
+}
+
+type UserStyle {
+	activeBadge: Badge
+	activeBadgeId: Id
+	activeEmoteSet: EmoteSet
+	activeEmoteSetId: Id
+	activePaint: Paint
+	activePaintId: Id
+	activeProfilePicture: UserProfilePicture
+	activeProfilePictureId: Id
+	pendingProfilePictureId: Id
+}
+
+directive @deprecated(
+	reason: String = "No longer supported"
+) on FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION | ENUM_VALUE
+directive @include(if: Boolean!) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
+directive @skip(if: Boolean!) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
+directive @specifiedBy(url: String!) on SCALAR
+extend schema
+	@link(
+		url: "https://specs.apollo.dev/federation/v2.3"
+		import: [
+			"@key"
+			"@tag"
+			"@shareable"
+			"@inaccessible"
+			"@override"
+			"@external"
+			"@provides"
+			"@requires"
+			"@composeDirective"
+			"@interfaceObject"
+		]
+	)

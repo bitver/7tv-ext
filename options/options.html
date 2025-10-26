@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>7TV Extension Settings</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>7TV Extension Settings</h1>
+    </header>
+    
+    <main>
+      <section class="settings-section">
+        <h2>General Settings</h2>
+        <div class="setting-item">
+          <label>
+            <input type="checkbox" id="enableEmotes" checked>
+            <div class="setting-info">
+              <span class="setting-title">Enable Emotes</span>
+              <span class="setting-description">Show 7TV emotes</span>
+            </div>
+          </label>
+        </div>
+        
+        <div class="setting-item">
+          <label>
+            <input type="checkbox" id="enableTooltips" checked>
+            <div class="setting-info">
+              <span class="setting-title">Enable Tooltips</span>
+              <span class="setting-description">Show emote information on hover</span>
+            </div>
+          </label>
+        </div>
+      </section>
+      
+      <section class="settings-section">
+        <h2>Advanced Settings</h2>
+        <div class="setting-item">
+          <label>
+            <input type="checkbox" id="debugMode">
+            <div class="setting-info">
+              <span class="setting-title">Debug Mode</span>
+              <span class="setting-description">Enable console logging for debugging</span>
+            </div>
+          </label>
+        </div>
+      </section>
+      
+      <div class="actions">
+        <button id="saveBtn" class="btn btn-primary">Save Settings</button>
+        <button id="resetBtn" class="btn btn-secondary">Reset to Defaults</button>
+      </div>
+      
+      <div id="statusMessage" class="status-message"></div>
+    </main>
+  </div>
+  
+  <script src="options.js"></script>
+</body>
+</html>
