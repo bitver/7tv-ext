@@ -112,34 +112,34 @@ function addChooseButtonsToEmoteSets() {
   
   console.log(`Found ${emoteSets.length} emote sets`);
   
+  // First, reset all existing copy buttons to default state
+  document.querySelectorAll('.copy-button-7tv-ext').forEach(btn => {
+    btn.textContent = '📋 Копировать';
+    btn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+  });
+  
   emoteSets.forEach((emoteSet, index) => {
-    // Extract emote set ID from href
-    const href = emoteSet.getAttribute('href');
-    const emoteSetId = href ? href.split('/').pop() : null;
-    
-    // Check if this is the copied set
-    const isCopiedSet = copiedEmoteSetData && copiedEmoteSetData.sourceId === emoteSetId;
-    
-    // If button already exists, just update it
+    // Skip if button already added
     if (emoteSet.querySelector('.button-container-7tv-ext')) {
-      const copyButton = emoteSet.querySelector('.copy-button-7tv-ext');
-      const pasteButton = emoteSet.querySelector('.paste-button-7tv-ext');
+      // Update existing button if this is the copied set
+      const href = emoteSet.getAttribute('href');
+      const emoteSetId = href ? href.split('/').pop() : null;
+      const isCopiedSet = copiedEmoteSetData && copiedEmoteSetData.sourceId === emoteSetId;
       
-      // Update copy button state
-      if (copyButton) {
-        copyButton.textContent = isCopiedSet ? '✓ Скопировано' : '📋 Копировать';
-        copyButton.style.background = isCopiedSet ? 
-          'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 
-          'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-      }
-      
-      // Update paste button visibility
-      if (pasteButton) {
-        pasteButton.style.display = copiedEmoteSetData ? 'block' : 'none';
+      if (isCopiedSet) {
+        const copyButton = emoteSet.querySelector('.copy-button-7tv-ext');
+        if (copyButton) {
+          copyButton.textContent = '✓ Скопировано';
+          copyButton.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+        }
       }
       
       return;
     }
+    
+    // Extract emote set ID from href
+    const href = emoteSet.getAttribute('href');
+    const emoteSetId = href ? href.split('/').pop() : null;
     
     // Extract emote set name
     const nameElement = emoteSet.querySelector('.name');
@@ -160,6 +160,9 @@ function addChooseButtonsToEmoteSets() {
     // Create copy button
     const copyButton = document.createElement('button');
     copyButton.className = 'copy-button-7tv-ext';
+    
+    // Check if this is the copied set
+    const isCopiedSet = copiedEmoteSetData && copiedEmoteSetData.sourceId === emoteSetId;
     
     copyButton.textContent = isCopiedSet ? '✓ Скопировано' : '📋 Копировать';
     copyButton.style.cssText = `

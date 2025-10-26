@@ -3,20 +3,8 @@
   "name": "7TV Extension",
   "version": "1.0.0",
   "description": "A browser extension for 7TV",
-  "icons": {
-    "16": "icons/icon16.png",
-    "32": "icons/icon32.png",
-    "48": "icons/icon48.png",
-    "128": "icons/icon128.png"
-  },
   "browser_action": {
-    "default_popup": "popup/popup.html",
-    "default_icon": {
-      "16": "icons/icon16.png",
-      "32": "icons/icon32.png",
-      "48": "icons/icon48.png",
-      "128": "icons/icon128.png"
-    }
+    "default_popup": "popup/popup.html"
   },
   "background": {
     "scripts": ["background/background.js"]
@@ -32,7 +20,6 @@
     "storage",
     "tabs",
     "activeTab",
-    "scripting",
     "*://7tv.app/*",
     "*://*.7tv.app/*",
     "*://api.7tv.app/*"

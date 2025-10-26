@@ -2,8 +2,8 @@
   "name": "7tv-ext",
   "version": "1.0.0",
   "scripts": {
-    "build:firefox": "web-ext build --source-dir=. --artifacts-dir=./dist --filename=7tv-ext-{version}.xpi --overwrite-dest",
-    "build:chrome": "bestzip dist/7tv-ext-chrome.zip background content icons popup manifest.json",
+    "build:firefox": "node build-firefox.js",
+    "build:chrome": "bestzip dist/7tv-ext-chrome.zip background content icons popup options manifest.json",
     "build": "npm run build:firefox && npm run build:chrome"
   },
   "devDependencies": {

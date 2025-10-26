@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>7TV Extension</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>7TV Extension</h1>
+      <p class="version">v1.0.0</p>
+    </header>
+    
+    <main>
+      <section class="status">
+        <div class="status-indicator">
+          <span class="status-dot active"></span>
+          <span class="status-text">Active</span>
+        </div>
+      </section>
+      
+      <section class="options">
+        <div class="option-item">
+          <label for="enableEmotes">
+            <input type="checkbox" id="enableEmotes" checked>
+            <span>Enable Emotes</span>
+          </label>
+        </div>
+        
+        <div class="option-item">
+          <label for="enableTooltips">
+            <input type="checkbox" id="enableTooltips" checked>
+            <span>Enable Tooltips</span>
+          </label>
+        </div>
+      </section>
+      
+      <section class="actions">
+        <button id="settingsBtn" class="btn btn-primary">Settings</button>
+        <button id="refreshBtn" class="btn btn-secondary">Refresh</button>
+      </section>
+    </main>
+    
+    <footer>
+      <a href="#" id="aboutLink">About</a>
+      <a href="#" id="helpLink">Help</a>
+    </footer>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>

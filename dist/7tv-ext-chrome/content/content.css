@@ -1,0 +1,55 @@
+/* Content script styles for 7TV Extension */
+
+/* Choose button for emote sets */
+.choose-button-7tv-ext {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+.choose-button-7tv-ext:active {
+  transform: scale(0.95) !important;
+}
+
+/* Emote set container positioning */
+a.emote-set {
+  position: relative !important;
+}
+
+/* Example: Custom emote container */
+.seventv-emote {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 2px;
+}
+
+.seventv-emote img {
+  max-height: 28px;
+  vertical-align: middle;
+}
+
+/* Example: Custom tooltip */
+.seventv-tooltip {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  z-index: 10000;
+  pointer-events: none;
+}
+
+/* Example: Settings panel */
+.seventv-settings {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 9999;
+  padding: 20px;
+  max-width: 500px;
+  width: 90%;
+}
+

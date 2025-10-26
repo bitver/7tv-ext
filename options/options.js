@@ -1,3 +1,8 @@
+// Polyfill for Chrome compatibility
+if (typeof browser === 'undefined') {
+  var browser = chrome;
+}
+
 // Options page script
 console.log('7TV Extension options page loaded');
 
